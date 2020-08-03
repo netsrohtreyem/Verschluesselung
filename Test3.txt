@@ -1,0 +1,3 @@
+Dieses ist eine Testdatei zum testen
+der dritten Verschlüsselungsart
+Vigenere-Verschlüsselung ~~

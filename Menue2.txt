@@ -1,0 +1,11 @@
+
+	Waehlen sie aus den folgenden Funktionen aus:
+	
+	Option (A) Caesar
+			   
+	Option (B) Vigenere
+			   
+	Option (C) One Time Pad
+
+	Option (E) zurueck zum Hauptmenue
+	

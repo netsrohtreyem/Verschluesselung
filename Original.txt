@@ -1,0 +1,5 @@
+Dieses ist ein Testtext
+
+für die Verschlüsselung
+
+von Texten² und Sonderzeichen {}

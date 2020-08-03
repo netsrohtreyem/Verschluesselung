@@ -1,0 +1,32 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	Waehlen sie aus den folgenden Funktionen aus:
+	
+	
+	Option (A) Eine Datei verschluesseln
+			   
+	Option (B) Eine Datei entschluesseln
+			   
+	Option (E) Programm beenden
+	

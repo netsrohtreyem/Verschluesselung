@@ -1,0 +1,7 @@
+Programm zur Verschluesselung bzw.
+zum Entschluesseln von Textdateien
+
+Autor:    Meyer
+Datum:    05/2010
+
+Verfahren: Caesar, One Time Pad, Vigenere
