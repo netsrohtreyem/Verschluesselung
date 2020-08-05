@@ -30,22 +30,23 @@ namespace Verschluesselung
             StringBuilder Geheim = new StringBuilder(Quelle,anzahl);
         	int index = 0;
         	int temp = 0;
-        	
-        	//Alle Zeichen verschlüsseln
-        	for(index = 0;index<anzahl;index++)
-        	{
-        		int temp2 = ((int)Quelle[index] + (int)(Schluessel[0]));
-        		//Wenn Überlauf, dann 255 abziehen
-        		if(temp2 > 255)
-        		{
-        			temp = ((int)(Quelle[index]) + (int)(Schluessel[0]));
-        			Geheim[index] = (char)(temp - 255);
-        		}
-        		else
-        		{
-        			Geheim[index] = (char)((int)Quelle[index] + (int)Schluessel[0]);
-        		}
-        	}
+
+            //Alle Zeichen verschlüsseln
+            for (index = 0; index < anzahl; index++)
+                {
+                    int temp2 = ((int)Quelle[index] + (int)(Schluessel[0]));
+                    //Wenn Überlauf, dann 255 abziehen
+                    if (temp2 > 255)
+                    {
+                        temp = ((int)(Quelle[index]) + (int)(Schluessel[0]));
+                        Geheim[index] = (char)(temp - 255);
+                    }
+                    else
+                    {
+                        Geheim[index] = (char)((int)Quelle[index] + (int)Schluessel[0]);
+                    }
+                }
+
        
         	return Geheim.ToString();
         }
