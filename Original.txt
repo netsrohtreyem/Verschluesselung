@@ -3,3 +3,5 @@ Dieses ist ein Testtext
 für die Verschlüsselung
 
 von Texten² und Sonderzeichen {}
+
+und Zahlen: Temperatur:  -23.78 °C

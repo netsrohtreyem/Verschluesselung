@@ -1,0 +1,12 @@
+
+	Waehlen sie aus den folgenden Funktionen aus:
+	
+	Option (A) Entschluesseln 
+	           (Key Paar mit passendem private Key vorhanden)
+			   
+	Option (B) Neues Key Paar erzeugen 
+	           (eigener private Key zum entschluesseln + 
+	            public für Externe zum verschlüsseln)
+
+	Option (C) zurueck zum Hauptmenue
+	

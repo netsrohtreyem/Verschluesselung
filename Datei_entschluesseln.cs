@@ -34,23 +34,7 @@ namespace Verschluesselung
             string Eingabe = null;
         	int auswahl = 0;
 
-        	//Datei auswaehlen
-            Console.WriteLine("\n\n");
-        	Console.WriteLine("Geben Sie den Pfad zur Datei an:\n");
-        	Pfad = Console.ReadLine();
 
-            try
-            {
-                Quelle = File.ReadAllText(Pfad, Encoding.UTF7);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
-        	Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n");
-        	Console.WriteLine("Die folgende Datei wurde geladen: " + Pfad + "\n\n");
-        	
         	//Auswahlmenue
         	Auswahl = menue("Menue2.txt");
         	//Auswahl auswerten
@@ -60,6 +44,23 @@ namespace Verschluesselung
         		case 0:
         			break;
         		case 1: //Caesar
+                        //Datei auswaehlen
+                    Console.WriteLine("\n\n");
+                    Console.WriteLine("Geben Sie den Pfad zur verschlüsselten Datei an:\n");
+                    Pfad = Console.ReadLine();
+
+                    try
+                    {
+                        Quelle = File.ReadAllText(Pfad, Encoding.UTF7);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
+                    Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n");
+                    Console.WriteLine("Die folgende Datei wurde geladen: " + Pfad + "\n\n");
+
                     if (Quelle == "")
                         return "";
         			Console.WriteLine("\n\n");
@@ -87,6 +88,23 @@ namespace Verschluesselung
         			}
         			break;
         		case 2: //Vigenere
+                        //Datei auswaehlen
+                    Console.WriteLine("\n\n");
+                    Console.WriteLine("Geben Sie den Pfad zur verschlüsselten Datei an:\n");
+                    Pfad = Console.ReadLine();
+
+                    try
+                    {
+                        Quelle = File.ReadAllText(Pfad, Encoding.UTF7);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
+                    Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n");
+                    Console.WriteLine("Die folgende Datei wurde geladen: " + Pfad + "\n\n");
+
                     if (Quelle == "")
                         return "";
         			Console.WriteLine("\n\n");
@@ -114,6 +132,23 @@ namespace Verschluesselung
         			}
         			break;
         		case 3: //OnetimePad
+                        //Datei auswaehlen
+                    Console.WriteLine("\n\n");
+                    Console.WriteLine("Geben Sie den Pfad zur verschlüsselten Datei an:\n");
+                    Pfad = Console.ReadLine();
+
+                    try
+                    {
+                        Quelle = File.ReadAllText(Pfad, Encoding.UTF7);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
+                    Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n");
+                    Console.WriteLine("Die folgende Datei wurde geladen: " + Pfad + "\n\n");
+
                     if (Quelle == "")
                         return "";
         			//Schluesseldatei öffnen + Schluessel auslesen
@@ -162,7 +197,25 @@ namespace Verschluesselung
                     switch (auswahl)
                     {
                         case 1: //entschluesseln, Keys vorhanden
-                            bool ergebnis = RSA_Entschluesselung(ref Quelle,Pfad);
+                                //Datei auswaehlen
+                            Console.WriteLine("\n\n");
+                            Console.WriteLine("Geben Sie den Pfad zur verschlüsselten Datei an:\n");
+                            Pfad = Console.ReadLine();
+                            
+                            Console.WriteLine("\n");
+                            Console.WriteLine("Geben Sie bitte den Pfad zum private Key ein: \n");
+                            string privatePath = Console.ReadLine(); 
+                            if (!File.Exists(privatePath))
+                            {
+                                Console.WriteLine("\nprivate Key fehlt!");
+                                return null;
+                            }
+                            else
+                            { }
+                            Console.WriteLine("\nGeben Sie den Zielpfad an, an dem das Ergebnis gespeichert werden soll: ");
+                            string Zielpfad = Console.ReadLine();
+
+                            bool ergebnis = RSA_Entschluesselung(ref Quelle,Pfad, privatePath, Zielpfad);
                             Original = Quelle;
                             if (ergebnis)
                             {
@@ -176,27 +229,13 @@ namespace Verschluesselung
                             while (!Console.KeyAvailable) ;
                             break;
                         case 2: //Keys erzeugen und exportieren
-                            // Save the public key created by the RSA
-                            // to a file. Caution, persisting the
-                            // key to a file is a security risk.
-                            CspParameters cspp = new CspParameters();
-                            StreamWriter sw = null;
-                            RSACryptoServiceProvider rsa = null;
-                            const string keyName = "Key01";
-                            // Stores a key pair in the key container.
-                            cspp.KeyContainerName = keyName;
-                            rsa = new RSACryptoServiceProvider(cspp);
-                            rsa.PersistKeyInCsp = true;
-
-                            sw = new StreamWriter("rsaPublicKey.txt");
-                            sw.Write(rsa.ToXmlString(false));
-                            sw.Close();
+                            RSA_CreateKeyPair();
                             Console.WriteLine("\nKeys erzeugt!");
                             Console.WriteLine("\nWeiter mit einem beliebigen Tastendruck...");
                             while (!Console.KeyAvailable) ;
                             Original = "";
                             break;
-                        case 5:
+                        case 3:
                             return null;
                     }
                     break;

@@ -36,8 +36,15 @@ namespace Verschluesselung
             StringBuilder S_Schluessel = new StringBuilder(Schluessel);
         	//Datei auswaehlen
         	Console.WriteLine("\n\n");
-        	Console.WriteLine("Geben Sie den Pfad zur Datei an:\n");
+        	Console.WriteLine("Geben Sie den Pfad zur Datei an, die verschlüsselt werden soll:\n");
         	Pfad = Console.ReadLine();
+            if(!File.Exists(Pfad))
+            {
+                Console.WriteLine("Datei existiert nicht!");
+                return null;
+            }
+            else
+            { }
 
             Quelle = File.ReadAllText(Pfad, Encoding.UTF7);
             if (Quelle != "")
@@ -126,16 +133,16 @@ namespace Verschluesselung
         			//In Datei speichern
         			if(Geheim != null)
         			{
-        				Console.WriteLine("\n\nVerschluesselung erfolgreich !\n\n");
-        				Console.WriteLine("Geben Sie den Zielpfad an, an dem das Ergebnis gespeichert werden soll: \n");
+        				Console.WriteLine("\n\nVerschluesselung erfolgreich, der Schlüssel wurde unter\n\"OTP_Schluessel.sls\" gespeichert! \n\n");
+        				Console.WriteLine("Geben Sie den Zielpfad an, an dem das Ergebnis gespeichert werden soll: ");
         				Pfad = Console.ReadLine();
 
                         File.WriteAllText(Pfad, Geheim, Encoding.UTF7);
 
-                        File.WriteAllText("OTP_Schluessel.txt", Schluessel, Encoding.UTF7);
+                        File.WriteAllText("OTP_Schluessel.sls", Schluessel, Encoding.UTF7);
 
-        				Console.WriteLine("\n\nDer Schluessel wurde gespeichert unter: ");
-        				Console.WriteLine("\nSchluessel.txt\n");
+        				Console.WriteLine("\n\nDer passende Schluessel wurde gespeichert in: ");
+        				Console.WriteLine("\nOTP_Schluessel.sls\n");
                         Console.WriteLine("\nWeiter mit einem beliebigen Tastendruck...");
                         while (!Console.KeyAvailable) ;
       					return null;
@@ -146,7 +153,19 @@ namespace Verschluesselung
         			}
         			break;
                 case 4: //RSA
-                    bool ergebnis = RSA_Verschluesselung(Pfad);
+                    Console.WriteLine("\n\n");
+                    Console.WriteLine("Geben Sie bitte den Pfad zum public Key ein: \n");
+                    string publicPath = Console.ReadLine(); //Achtung keine verdeckte Eingabe!!!
+                    if(!File.Exists(publicPath))
+                    {
+                        Console.WriteLine("\nPublicKey fehlt!");
+                        return null;
+                    }
+                    Console.WriteLine("\nGeben Sie den Zielpfad an, an dem das Ergebnis gespeichert werden soll: ");
+                    string Zielpfad = Console.ReadLine();
+
+                    bool ergebnis = RSA_Verschluesselung(Pfad,Zielpfad,publicPath);
+
                     if (ergebnis)
                     {
                         Console.WriteLine("\n\nVerschluesselung erfolgreich !\n\n");
@@ -159,7 +178,9 @@ namespace Verschluesselung
                     while (!Console.KeyAvailable) ;
                     break;
         		case 5:
-        			return null;
+                    Console.WriteLine("\nWeiter mit einem beliebigen Tastendruck...");
+                    while (!Console.KeyAvailable) ;
+                    return null;
         		default:
         			break;
         	}

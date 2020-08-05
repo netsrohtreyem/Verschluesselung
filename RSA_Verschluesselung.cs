@@ -1,7 +1,7 @@
 ﻿/*****************************************************************************
 h e i n r i c h -h e r t z -b e r u f s k o l l e g  d e r  s t a d t  b o n n
-Autor:			Meyer	
-Klasse:			IA109
+Autor:				
+Klasse:			
 Datum:			22.1.2010
 Datei:			RSA_Verschluesselung.cs
 Einsatz:		Funktionsdefinition
@@ -24,141 +24,110 @@ namespace Verschluesselung
 {
     partial class main
     {
-        static public bool RSA_Verschluesselung(string FileName)
+        static public bool RSA_Verschluesselung(string FileName,string ziel,string publicPath)
         {
-            //public Key laden/importiern evtl. Keys erzeugen
+            bool ergebnis = false;
+
             CspParameters cspp = new CspParameters();
-            RSACryptoServiceProvider rsa;
 
-            // Public key file
-            const string PubKeyFile = @"rsaPublicKey.txt";
+            //Data to encrypt
+            StreamReader SR = new StreamReader(FileName, Encoding.UTF7);
+            string datainFile = SR.ReadToEnd();
+            SR.Close();
 
-            // Key container name for
-            // private/public key value pair.
-            const string keyName = "Key01";            
-
-            //public Key holen
-            StreamReader sr = null;
-            try
+            //public Key
+            SR = new StreamReader(publicPath);
+            cspp.KeyContainerName = "Key01";
+            RSACryptoServiceProvider RSA = new RSACryptoServiceProvider(cspp);
+            string keytxt = SR.ReadToEnd();
+            RSA.FromXmlString(keytxt);
+            RSA.PersistKeyInCsp = true;
+            if(RSA == null || RSA.KeySize <= 0 || keytxt.Length <= 0)
             {
-                sr = new StreamReader(PubKeyFile);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-            cspp.KeyContainerName = keyName;
-            rsa = new RSACryptoServiceProvider(cspp);
-            string keytxt = "";
-            try
-            {
-                keytxt = sr.ReadToEnd();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-            rsa.FromXmlString(keytxt);
-            rsa.PersistKeyInCsp = true;
-            sr.Close();
-
-            if (rsa == null)
-            {
-                Console.WriteLine("\nKey not set.\n");
-                return false;
+                ergebnis = false;
             }
             else
             {
+                ergebnis = true;
+            }
 
-                string fName = FileName;
-                if (fName != null)
+            EncryptFile(FileName, ziel,RSA);
+
+            return ergebnis;
+        }
+
+        static private void EncryptFile(string inFile,string outFile, RSACryptoServiceProvider RSA)
+        {
+
+            // Create instance of Aes for
+            // symmetric encryption of the data.
+            Aes aes = Aes.Create();
+            ICryptoTransform transform = aes.CreateEncryptor();
+
+            // Use RSACryptoServiceProvider to
+            // encrypt the AES key.
+            // rsa is previously instantiated:
+            //    rsa = new RSACryptoServiceProvider(cspp);
+            byte[] keyEncrypted = RSA.Encrypt(aes.Key, false);
+
+            // Create byte arrays to contain
+            // the length values of the key and IV.
+            byte[] LenK = new byte[4];
+            byte[] LenIV = new byte[4];
+
+            int lKey = keyEncrypted.Length;
+            LenK = BitConverter.GetBytes(lKey);
+            int lIV = aes.IV.Length;
+            LenIV = BitConverter.GetBytes(lIV);
+
+            // Write the following to the FileStream
+            // for the encrypted file (outFs):
+            // - length of the key
+            // - length of the IV
+            // - ecrypted key
+            // - the IV
+            // - the encrypted cipher content
+
+            using (FileStream outFs = new FileStream(outFile, FileMode.Create))
+            {
+
+                outFs.Write(LenK, 0, 4);
+                outFs.Write(LenIV, 0, 4);
+                outFs.Write(keyEncrypted, 0, lKey);
+                outFs.Write(aes.IV, 0, lIV);
+
+                // Now write the cipher text using
+                // a CryptoStream for encrypting.
+                using (CryptoStream outStreamEncrypted = new CryptoStream(outFs, transform, CryptoStreamMode.Write))
                 {
-                    FileInfo fInfo = new FileInfo(fName);
-                    // Pass the file name without the path.
-                    string inFile = fInfo.Name;
-                    // Create instance of Rijndael for
-                    // symetric encryption of the data.
-                    RijndaelManaged rjndl = new RijndaelManaged();
-                    rjndl.KeySize = 256;
-                    rjndl.BlockSize = 256;
-                    rjndl.Mode = CipherMode.CBC;
-                    ICryptoTransform transform = rjndl.CreateEncryptor();
 
-                    // Use RSACryptoServiceProvider to
-                    // enrypt the Rijndael key.
-                    byte[] keyEncrypted = rsa.Encrypt(rjndl.Key, false);
+                    // By encrypting a chunk at
+                    // a time, you can save memory
+                    // and accommodate large files.
+                    int count = 0;
+                    int offset = 0;
 
-                    // Create byte arrays to contain
-                    // the length values of the key and IV.
-                    byte[] LenK = new byte[4];
-                    byte[] LenIV = new byte[4];
+                    // blockSizeBytes can be any arbitrary size.
+                    int blockSizeBytes = aes.BlockSize / 8;
+                    byte[] data = new byte[blockSizeBytes];
+                    int bytesRead = 0;
 
-                    int lKey = keyEncrypted.Length;
-                    LenK = BitConverter.GetBytes(lKey);
-                    int lIV = rjndl.IV.Length;
-                    LenIV = BitConverter.GetBytes(lIV);
-
-
-                    // Write the following to the FileStream
-                    // for the encrypted file (outFs):
-                    // - length of the key
-                    // - length of the IV
-                    // - ecrypted key
-                    // - the IV
-                    // - the encrypted cipher content
-
-                    Console.WriteLine("Geben Sie den Zielpfad an, an dem das Ergebnis gespeichert werden soll: \n");
-                    string outFile = Console.ReadLine();
-
-                    using (FileStream outFs = new FileStream(outFile, FileMode.Create))
+                    using (FileStream inFs = new FileStream(inFile, FileMode.Open))
                     {
-
-                        outFs.Write(LenK, 0, 4);
-                        outFs.Write(LenIV, 0, 4);
-                        outFs.Write(keyEncrypted, 0, lKey);
-                        outFs.Write(rjndl.IV, 0, lIV);
-
-                        // Now write the cipher text using
-                        // a CryptoStream for encrypting.
-                        using (CryptoStream outStreamEncrypted = new CryptoStream(outFs, transform, CryptoStreamMode.Write))
+                        do
                         {
-
-                            // By encrypting a chunk at
-                            // a time, you can save memory
-                            // and accommodate large files.
-                            int count = 0;
-                            int offset = 0;
-
-                            // blockSizeBytes can be any arbitrary size.
-                            int blockSizeBytes = rjndl.BlockSize / 8;
-                            byte[] data = new byte[blockSizeBytes];
-                            int bytesRead = 0;
-
-                            using (FileStream inFs = new FileStream(inFile, FileMode.Open))
-                            {
-                                do
-                                {
-                                    count = inFs.Read(data, 0, blockSizeBytes);
-                                    offset += count;
-                                    outStreamEncrypted.Write(data, 0, count);
-                                    bytesRead += blockSizeBytes;
-                                }
-                                while (count > 0);
-                                inFs.Close();
-                            }
-                            outStreamEncrypted.FlushFinalBlock();
-                            outStreamEncrypted.Close();
+                            count = inFs.Read(data, 0, blockSizeBytes);
+                            offset += count;
+                            outStreamEncrypted.Write(data, 0, count);
+                            bytesRead += blockSizeBytes;
                         }
-                        outFs.Close();
+                        while (count > 0);
+                        inFs.Close();
                     }
-                    return true;
+                    outStreamEncrypted.FlushFinalBlock();
+                    outStreamEncrypted.Close();
                 }
-                else
-                {
-                    return false;
-                }
+                outFs.Close();
             }
         }
     }

@@ -31,7 +31,7 @@ namespace Verschluesselung
 	        {
 	        	//Menue anzeigen und Auswahl entgegennehmen
 	        	Auswahl_text = menue("Menue.txt");
-                if (Auswahl_text == null)
+                if (Auswahl_text == null || Auswahl_text == "")
                     continue;
 	        	//Auswahl auswerten
 	        	auswahl = menue_auswerten(Auswahl_text);
@@ -53,7 +53,7 @@ namespace Verschluesselung
 	        			ziel = Datei_entschluesseln(ref quelle,ref schluessel);
                         if (ziel == null)
                             break;
-                        Console.ReadLine();
+                        //Console.ReadLine();
 	        			if(ziel == null)
 	        			{
 	        				continue;
